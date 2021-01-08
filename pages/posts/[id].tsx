@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import ReactMarkdown from 'react-markdown'
 
 import { IPost, getAllPostIds, getPostData } from '../../lib/posts'
 import Layout from '../components/layout'
@@ -30,7 +31,8 @@ export default function Post({ postData }: ChildProps) {
                 <div className={utilStyles.lightText}>
                 <Date dateString={postData.date} />
                 </div>
-                <div dangerouslySetInnerHTML={{ __html: postData.contentHtml }} />
+                {/* Render our markdown content as HTML */} 
+                <ReactMarkdown children={postData.markdown} />
             </article>
         </Layout>
     );

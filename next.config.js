@@ -7,3 +7,5 @@ module.exports = {
     basePath: IS_PROD ? `/${PROJECT_NAME}` : '',
 }
 */
+
+module.exports = {}
