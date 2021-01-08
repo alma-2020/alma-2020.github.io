@@ -1,13 +1,13 @@
 import Head from 'next/head'
 import ReactMarkdown from 'react-markdown'
 
-import { IPost, getAllPostIds, getPostData } from '../../lib/posts'
+import { Post, getAllPostIds, getPostData } from '../../lib/posts'
 import Layout from '../components/layout'
 import Date from '../components/date'
 import utilStyles from '../styles/utils.module.css'
 
 interface ChildProps {
-    postData: IPost;
+    postData: Post;
 }
 
 interface Context {
@@ -20,7 +20,7 @@ interface StaticProps {
     props: ChildProps;
 }
 
-export default function Post({ postData }: ChildProps) {
+export default function PostPage({ postData }: ChildProps) {
     return (
         <Layout>
             <Head>

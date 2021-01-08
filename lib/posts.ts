@@ -3,7 +3,7 @@ import path from 'path'
 import matter from 'gray-matter'
 import { parse, parseISO } from 'date-fns'
 
-export interface IPost {
+export interface Post {
     id: string;
     title: string;
     date: string;
@@ -13,9 +13,9 @@ export interface IPost {
 
 const postsDirectory = path.join(process.cwd(), 'posts');
 
-export function getSortedPostsData(): Array<IPost> {
+export function getSortedPostsData(): Array<Post> {
     const fileNames = fs.readdirSync(postsDirectory);
-    const allPostsData: IPost[] = fileNames.map(fileName => {
+    const allPostsData: Post[] = fileNames.map(fileName => {
         // remove .md from the filename
         const id = fileName.replace(/\.md$/, '');
 
@@ -34,7 +34,7 @@ export function getSortedPostsData(): Array<IPost> {
     });
     
     // sort posts by date
-    return allPostsData.sort((a: IPost, b: IPost): number => {
+    return allPostsData.sort((a: Post, b: Post): number => {
         const postDateA = parsePostDate(a.hour, a.date);
         const postDateB = parsePostDate(b.hour, b.date);
 
@@ -58,7 +58,7 @@ export function getAllPostIds() {
     });
 }
 
-export async function getPostData(id: string): Promise<IPost> {
+export async function getPostData(id: string): Promise<Post> {
     const fullPath = path.join(postsDirectory, `${id}.md`);
     const fileContents = fs.readFileSync(fullPath, 'utf8');
     const matterResult = matter(fileContents);

@@ -1,16 +1,16 @@
 import Head from 'next/head'
 import Link from 'next/link'
 
-import { IPost, getSortedPostsData } from '../lib/posts'
+import { Post, getSortedPostsData } from '../lib/posts'
 import Layout, {siteTitle} from "./components/layout"
 import Date from './components/date'
 import utilStyles from './styles/utils.module.css'
 
-interface IParam {
-  allPostsData: Array<IPost>;
+interface ChildProps {
+  allPostsData: Array<Post>;
 }
 
-export default function Home({ allPostsData }: IParam) {
+export default function Home({ allPostsData }: ChildProps) {
   return (
     <Layout home>
       <Head>
