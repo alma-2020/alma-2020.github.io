@@ -5,11 +5,21 @@ import Layout from '../components/layout'
 import Date from '../components/date'
 import utilStyles from '../styles/utils.module.css'
 
-interface IParam {
+interface ChildProps {
     postData: IPost;
 }
 
-export default function Post({ postData }: IParam) {
+interface Context {
+    params: {
+        id: string;
+    }
+}
+
+interface StaticProps {
+    props: ChildProps;
+}
+
+export default function Post({ postData }: ChildProps) {
     return (
         <Layout>
             <Head>
@@ -36,7 +46,9 @@ export async function getStaticPaths() {
     };
 }
 
-export async function getStaticProps({ params }: any) {
+export async function getStaticProps(
+    { params }: Context
+): Promise<StaticProps> {
     // Fetch necessary data for the blog post using params.id
     const postData = await getPostData(params.id);
     return {
