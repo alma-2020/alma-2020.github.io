@@ -6,11 +6,11 @@ import Layout, {siteTitle} from "./components/layout"
 import Date from './components/date'
 import utilStyles from './styles/utils.module.css'
 
-interface ChildProps {
+interface Props {
   allPostsData: Array<Post>;
 }
 
-export default function Home({ allPostsData }: ChildProps) {
+export default function Home({ allPostsData }: Props) {
   return (
     <Layout home>
       <Head>

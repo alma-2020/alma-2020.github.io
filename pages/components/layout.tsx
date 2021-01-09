@@ -7,12 +7,12 @@ import utilStyles from '../styles/utils.module.css'
 const name = "A COOL BLOG";
 export const siteTitle = 'A COOL BLOG';
 
-interface ChildProps {
+interface Props {
     children: JSX.Element[]|JSX.Element;
     home?: boolean;
 }
 
-export default function Layout({ children, home }: ChildProps) {
+export default function Layout({ children, home }: Props) {
     return (
         <div className={styles.container}>
             <Head>

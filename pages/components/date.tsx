@@ -1,11 +1,11 @@
 import { parseISO, format } from 'date-fns'
 import { FC } from 'react'
 
-interface ChildProps {
+interface Props {
     dateString: string;
 }
 
-const Date: FC<ChildProps> = ({ dateString }) => {
+const Date: FC<Props> = ({ dateString }) => {
     const date = parseISO(dateString);
 
     if (!isDateValid(date)) {

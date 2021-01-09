@@ -2,7 +2,7 @@ import Head from 'next/head'
 import ReactMarkdown from 'react-markdown'
 import Lightbox from 'react-image-lightbox'
 import 'react-image-lightbox/style.css'
-import { 
+import React, { 
     Dispatch, 
     SetStateAction, 
     useEffect, 
@@ -15,7 +15,7 @@ import utilStyles from '../styles/utils.module.css'
 import { Post, getAllPostIds, getPostData } from '../../lib/posts'
 import { Image, ImageContainer } from '../../styles/postStyles'
 
-interface ChildProps {
+interface Props {
     postData: Post;
 }
 
@@ -26,14 +26,14 @@ interface Context {
 }
 
 interface StaticProps {
-    props: ChildProps;
+    props: Props;
 }
 
 /** An array containing the URLs of all the images in the post */
 let images: Array<string> = [];
 let imageCaptions: Array<string> = [];
 
-export default function PostPage({ postData }: ChildProps) {
+export default function PostPage({ postData }: Props) {
     /** used to close and open the image modal */
     const [isImageOpen, setIsImageOpen] = useState<boolean>(false);
     /** The index of the image that should be opened */
@@ -164,7 +164,7 @@ function PostImage({ image, pageState }: PostImageProps) {
         imageCaptions.push(caption)
     }
 
-    function findIndex(imageUrl: string): number {
+    function findImageIndex(imageUrl: string): number {
         let index = images.indexOf(imageUrl);
         if (index < 0) {
             // start from the first image if we don't find this one
@@ -174,41 +174,43 @@ function PostImage({ image, pageState }: PostImageProps) {
         return index;
     }
 
+    function handleClick(): void {
+        if (images.length > 0) {
+            const { setImageIndex, setIsImageOpen } = pageState;
+
+            // set the index of the image we want to open 
+            const index = findImageIndex(image.url);
+            setImageIndex(index);
+       
+            // open the modal
+            setIsImageOpen(true);   
+
+            // block scroll while the modal is open and set a margin on the 
+            // page with the same width as the scrollbar so that the content 
+            // doesn't jump around when the scrollbar appears/disappears 
+
+            let marginRightPx = 0;
+            if(window.getComputedStyle) {
+                let bodyStyle = window.getComputedStyle(document.body);
+                if(bodyStyle) {
+                    marginRightPx = parseInt(bodyStyle.marginRight, 10);
+                }
+            }
+
+            let scrollbarWidthPx = window.innerWidth - document.body.clientWidth;
+            Object.assign(document.body.style, {
+                overflowY: 'hidden',
+                marginRight: `${marginRightPx + scrollbarWidthPx}px`,
+            });
+        }
+    }
+
     return (
         <ImageContainer>
             <Image 
                 src={image.url} 
                 alt={image.alt} 
-                onClick={e => {
-                    if (images.length > 0) {
-                        const { setImageIndex, setIsImageOpen } = pageState;
-
-                        // set the index of the image we want to open 
-                        const index = findIndex(image.url);
-                        setImageIndex(index);
-                   
-                        // open the modal
-                        setIsImageOpen(true);   
-
-                        // block scroll while the modal is open and set a margin on the 
-                        // page with the same width as the scrollbar so that the content 
-                        // doesn't jump around when the scrollbar appears/disappears 
-
-                        let marginRightPx = 0;
-                        if(window.getComputedStyle) {
-                            let bodyStyle = window.getComputedStyle(document.body);
-                            if(bodyStyle) {
-                                marginRightPx = parseInt(bodyStyle.marginRight, 10);
-                            }
-                        }
-
-                        let scrollbarWidthPx = window.innerWidth - document.body.clientWidth;
-                        Object.assign(document.body.style, {
-                            overflowY: 'hidden',
-                            marginRight: `${marginRightPx + scrollbarWidthPx}px`,
-                        });
-                    }  
-                }}
+                onClick={handleClick}
             />
         </ImageContainer>
     )
