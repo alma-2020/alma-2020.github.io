@@ -64,7 +64,7 @@ export default function PostPage({ postData }: ChildProps) {
 
         return (
             <div className={utilStyles.pageImageContainer}>
-                <Image 
+                <img 
                     onClick={e => {
 
                         if (images.length > 0) {
@@ -78,11 +78,7 @@ export default function PostPage({ postData }: ChildProps) {
                     }}
                     src={image.url} 
                     alt={image.alt} 
-                    unsized
-                    unoptimized
                     className={utilStyles.pageImage}
-                    // @ts-ignore
-                    layout="fixed"
                 />
             </div>
         )
