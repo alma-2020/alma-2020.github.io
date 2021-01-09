@@ -1,6 +1,5 @@
 import Head from 'next/head'
 import ReactMarkdown from 'react-markdown'
-import styled from 'styled-components'
 import Lightbox from 'react-image-lightbox'
 import 'react-image-lightbox/style.css'
 import { 
@@ -10,10 +9,11 @@ import {
     useState,
 } from 'react'
 
-import { Post, getAllPostIds, getPostData } from '../../lib/posts'
 import Layout from '../components/layout'
 import Date from '../components/date'
 import utilStyles from '../styles/utils.module.css'
+import { Post, getAllPostIds, getPostData } from '../../lib/posts'
+import { Image, ImageContainer } from '../styles/postPage'
 
 interface ChildProps {
     postData: Post;
@@ -90,11 +90,14 @@ export default function PostPage({ postData }: ChildProps) {
             <Head>
                 <title>A COOL BLOG - {postData.title}</title>
             </Head>
+
             <article>
                 <h1 className={utilStyles.headingXl}>{postData.title}</h1>
+                
                 <div className={utilStyles.lightText}>
                     <Date dateString={postData.date} />
                 </div>
+                
                 {/* Render our markdown content as HTML */} 
                 <ReactMarkdown 
                     children={postData.markdown}
@@ -102,6 +105,7 @@ export default function PostPage({ postData }: ChildProps) {
                     allowDangerousHtml={true}
                 />
             </article>
+
             {isImageOpen && (
                 <Lightbox
                     mainSrc={images[imageIndex]}
@@ -217,31 +221,6 @@ function PostLink({ link }) {
         </a>
     );
 }
-
-const Image = styled.img`
-    max-width: 500px;
-    max-height: 400px;
-    min-height: 200px;
-    min-width: 200px;
-    margin-left: 10px;
-    margin-right: 10px;
-    text-align: center;
-    border-radius: 8px;
-        
-    /* make our image seem clicable to the user */
-    cursor: pointer;
-
-    @media only screen and (max-width: 550px) {
-        .pageImage {
-            max-width: 95%;
-        }
-    }
-`;
-
-const ImageContainer = styled.div`
-    display: flex;
-    justify-content: center;
-`;
 
 export async function getStaticPaths() {
     // Return a list of possible id values
