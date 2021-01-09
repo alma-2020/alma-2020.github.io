@@ -13,7 +13,7 @@ import Layout from '../components/layout'
 import Date from '../components/date'
 import utilStyles from '../styles/utils.module.css'
 import { Post, getAllPostIds, getPostData } from '../../lib/posts'
-import { Image, ImageContainer } from '../styles/postPage'
+import { Image, ImageContainer } from '../../styles/postStyles'
 
 interface ChildProps {
     postData: Post;
