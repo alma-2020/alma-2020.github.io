@@ -1,14 +1,14 @@
 import Head from 'next/head'
-import Image from "next/image"
 import ReactMarkdown from 'react-markdown'
+import styled from 'styled-components'
+import Lightbox from 'react-image-lightbox'
+import 'react-image-lightbox/style.css'
 import { 
     Dispatch, 
     SetStateAction, 
     useEffect, 
-    useState 
+    useState,
 } from 'react'
-import Lightbox from 'react-image-lightbox'
-import 'react-image-lightbox/style.css'
 
 import { Post, getAllPostIds, getPostData } from '../../lib/posts'
 import Layout from '../components/layout'
@@ -141,7 +141,7 @@ export default function PostPage({ postData }: ChildProps) {
     );
 }
 
-interface PostImageChildProps {
+interface PostImageProps {
     image: {
         url: string;
         alt: string;
@@ -152,7 +152,7 @@ interface PostImageChildProps {
     };
 }
 
-function PostImage({ image, pageState }: PostImageChildProps) {
+function PostImage({ image, pageState }: PostImageProps) {
     if (images.indexOf(image.url) === -1) {
         // add the data to our arrays
         const caption = image.alt ? image.alt : '';
@@ -171,11 +171,10 @@ function PostImage({ image, pageState }: PostImageChildProps) {
     }
 
     return (
-        <div className={utilStyles.pageImageContainer}>
-            <img 
+        <ImageContainer>
+            <Image 
                 src={image.url} 
                 alt={image.alt} 
-                className={utilStyles.pageImage}
                 onClick={e => {
                     if (images.length > 0) {
                         const { setImageIndex, setIsImageOpen } = pageState;
@@ -207,7 +206,7 @@ function PostImage({ image, pageState }: PostImageChildProps) {
                     }  
                 }}
             />
-        </div>
+        </ImageContainer>
     )
 };
 
@@ -218,6 +217,31 @@ function PostLink({ link }) {
         </a>
     );
 }
+
+const Image = styled.img`
+    max-width: 500px;
+    max-height: 400px;
+    min-height: 200px;
+    min-width: 200px;
+    margin-left: 10px;
+    margin-right: 10px;
+    text-align: center;
+    border-radius: 8px;
+        
+    /* make our image seem clicable to the user */
+    cursor: pointer;
+
+    @media only screen and (max-width: 550px) {
+        .pageImage {
+            max-width: 95%;
+        }
+    }
+`;
+
+const ImageContainer = styled.div`
+    display: flex;
+    justify-content: center;
+`;
 
 export async function getStaticPaths() {
     // Return a list of possible id values
