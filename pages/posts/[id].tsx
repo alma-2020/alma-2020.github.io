@@ -79,6 +79,7 @@ export default function PostPage({ postData }: ChildProps) {
                     src={image.url} 
                     alt={image.alt} 
                     unsized
+                    unoptimized
                     className={utilStyles.pageImage}
                     // @ts-ignore
                     layout="fixed"
@@ -120,38 +121,36 @@ export default function PostPage({ postData }: ChildProps) {
                 />
             </article>
             {isImageOpen && (
-                <div >
-                    <Lightbox
-                        mainSrc={images[imageIndex]}
-                        nextSrc={images[(imageIndex + 1) % images.length]}
-                        prevSrc={
-                            images[(imageIndex + images.length - 1) % images.length]
-                        }
-                        mainSrcThumbnail={images[imageIndex]}
-                        nextSrcThumbnail={images[(imageIndex + 1) % images.length]}
-                        prevSrcThumbnail={
-                            images[(imageIndex + images.length - 1) % images.length]
-                        }
-                        onCloseRequest={() => {
-                            setIsImageOpen(false);
+                <Lightbox
+                    mainSrc={images[imageIndex]}
+                    nextSrc={images[(imageIndex + 1) % images.length]}
+                    prevSrc={
+                        images[(imageIndex + images.length - 1) % images.length]
+                    }
+                    mainSrcThumbnail={images[imageIndex]}
+                    nextSrcThumbnail={images[(imageIndex + 1) % images.length]}
+                    prevSrcThumbnail={
+                        images[(imageIndex + images.length - 1) % images.length]
+                    }
+                    onCloseRequest={() => {
+                        setIsImageOpen(false);
 
-                            // re-enable the scroll
-                            document.body.style.overflow = 'unset';
-                        }}
-                        onMovePrevRequest={() => {
-                            setImageIndex((imageIndex + images.length - 1) % images.length)
-                        }}
-                        onMoveNextRequest={() => {
-                            setImageIndex((imageIndex + 1) % images.length)
-                        }}
-                        onImageLoadError={() => {
-                            console.error('Image load error');
-                            setIsImageOpen(false);
-                        }}
-                        imageCaption={imageCaptions[imageIndex]}
-                        reactModalProps={{ shouldReturnFocusAfterClose: false }}
-                    />
-                </div>
+                        // re-enable the scroll
+                        document.body.style.overflow = 'unset';
+                    }}
+                    onMovePrevRequest={() => {
+                        setImageIndex((imageIndex + images.length - 1) % images.length)
+                    }}
+                    onMoveNextRequest={() => {
+                        setImageIndex((imageIndex + 1) % images.length)
+                    }}
+                    onImageLoadError={() => {
+                        console.error('Image load error');
+                        setIsImageOpen(false);
+                    }}
+                    imageCaption={imageCaptions[imageIndex]}
+                    reactModalProps={{ shouldReturnFocusAfterClose: false }}
+                />
             )}
         </Layout>
     );
