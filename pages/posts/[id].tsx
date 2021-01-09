@@ -1,6 +1,12 @@
 import Head from 'next/head'
 import Image from "next/image"
 import ReactMarkdown from 'react-markdown'
+import { 
+    Dispatch, 
+    SetStateAction, 
+    useEffect, 
+    useState 
+} from 'react'
 import Lightbox from 'react-image-lightbox'
 import 'react-image-lightbox/style.css'
 
@@ -8,7 +14,6 @@ import { Post, getAllPostIds, getPostData } from '../../lib/posts'
 import Layout from '../components/layout'
 import Date from '../components/date'
 import utilStyles from '../styles/utils.module.css'
-import { useEffect, useState } from 'react'
 
 interface ChildProps {
     postData: Post;
@@ -29,7 +34,7 @@ let images: Array<string> = [];
 let imageCaptions: Array<string> = [];
 
 export default function PostPage({ postData }: ChildProps) {
-    /** used to close and open photoswipe */
+    /** used to close and open the image modal */
     const [isImageOpen, setIsImageOpen] = useState<boolean>(false);
     /** The index of the image that should be opened */
     const [imageIndex, setImageIndex] = useState<number>(0);
@@ -42,72 +47,38 @@ export default function PostPage({ postData }: ChildProps) {
         };
     }, []);
 
-    function findIndex(imageUrl: string): number {
-        let index = images.indexOf(imageUrl);
-        if (index < 0) {
-            // start from the first image if we don't find this one
-            index = 0;
-        }
-
-        return index;
-    }
-
-    const PostImage = ({ image }) => {
-        if (images.indexOf(image.url) === -1) {
-            // add the data to our arrays
-            const caption = image.alt ? image.alt : '';
-            images.push(image.url);
-            imageCaptions.push(caption)
-        }
-
-        return (
-            <div className={utilStyles.pageImageContainer}>
-                <img 
-                    src={image.url} 
-                    alt={image.alt} 
-                    className={utilStyles.pageImage}
-                    onClick={e => {
-                        if (images.length > 0) {
-                            // set the index of the image we want to open 
-                            const index = findIndex(image.url);
-                            setImageIndex(index);
-                       
-                            // open the modal
-                            setIsImageOpen(true);   
-
-                            // block scroll while the modal is open and set a margin on the 
-                            // page with the same width as the scrollbar so that the content 
-                            // doesn't jump around when the scrollbar appears/disappears 
-
-                            let marginRightPx = 0;
-                            if(window.getComputedStyle) {
-                                let bodyStyle = window.getComputedStyle(document.body);
-                                if(bodyStyle) {
-                                    marginRightPx = parseInt(bodyStyle.marginRight, 10);
-                                }
-                            }
-
-                            let scrollbarWidthPx = window.innerWidth - document.body.clientWidth;
-                            Object.assign(document.body.style, {
-                                overflowY: 'hidden',
-                                marginRight: `${marginRightPx + scrollbarWidthPx}px`,
-                            });
-                        }  
-                    }}
-                />
-            </div>
-        )
-    };
-
     const markdownRenderers = {
         image: (image) => {
-            return <PostImage image={image}/>;
+            return (
+                <PostImage 
+                    image={image} 
+                    pageState={{
+                        setImageIndex,
+                        setIsImageOpen,
+                    }}
+                />
+            );
+        },
+        link: (link) => {
+            return <PostLink link={link}/>;
         },
         paragraph: (paragraph) => {
             const { node } = paragraph;
-            if (node.children[0].type === "image") {
+            if (node.children[0].type === 'image') {
                 const image = node.children[0];
-                return <PostImage image={image}/>;
+                return (
+                    <PostImage 
+                        image={image} 
+                        pageState={{
+                            setImageIndex,
+                            setIsImageOpen,
+                        }}
+                    />
+                );
+            }
+            if (node.children[0].type === 'a') {
+                const link = node.children[0];
+                return <PostLink link={link}/>;
             }
         
             return <p>{paragraph.children}</p>;
@@ -167,6 +138,84 @@ export default function PostPage({ postData }: ChildProps) {
                 />
             )}
         </Layout>
+    );
+}
+
+interface PostImageChildProps {
+    image: {
+        url: string;
+        alt: string;
+    };
+    pageState: {
+        setIsImageOpen: Dispatch< SetStateAction<boolean> >;
+        setImageIndex: Dispatch< SetStateAction<number> >;
+    };
+}
+
+function PostImage({ image, pageState }: PostImageChildProps) {
+    if (images.indexOf(image.url) === -1) {
+        // add the data to our arrays
+        const caption = image.alt ? image.alt : '';
+        images.push(image.url);
+        imageCaptions.push(caption)
+    }
+
+    function findIndex(imageUrl: string): number {
+        let index = images.indexOf(imageUrl);
+        if (index < 0) {
+            // start from the first image if we don't find this one
+            index = 0;
+        }
+
+        return index;
+    }
+
+    return (
+        <div className={utilStyles.pageImageContainer}>
+            <img 
+                src={image.url} 
+                alt={image.alt} 
+                className={utilStyles.pageImage}
+                onClick={e => {
+                    if (images.length > 0) {
+                        const { setImageIndex, setIsImageOpen } = pageState;
+
+                        // set the index of the image we want to open 
+                        const index = findIndex(image.url);
+                        setImageIndex(index);
+                   
+                        // open the modal
+                        setIsImageOpen(true);   
+
+                        // block scroll while the modal is open and set a margin on the 
+                        // page with the same width as the scrollbar so that the content 
+                        // doesn't jump around when the scrollbar appears/disappears 
+
+                        let marginRightPx = 0;
+                        if(window.getComputedStyle) {
+                            let bodyStyle = window.getComputedStyle(document.body);
+                            if(bodyStyle) {
+                                marginRightPx = parseInt(bodyStyle.marginRight, 10);
+                            }
+                        }
+
+                        let scrollbarWidthPx = window.innerWidth - document.body.clientWidth;
+                        Object.assign(document.body.style, {
+                            overflowY: 'hidden',
+                            marginRight: `${marginRightPx + scrollbarWidthPx}px`,
+                        });
+                    }  
+                }}
+            />
+        </div>
+    )
+};
+
+function PostLink({ link }) {
+    return (
+        <a href={link.href} target="_blank">
+            {link.children}
+        </a>
     );
 }
 
