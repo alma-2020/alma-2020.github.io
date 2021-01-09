@@ -24,14 +24,14 @@ export default function Home({ allPostsData }: ChildProps) {
       <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
         <h2 className={utilStyles.headingLg}>Blog</h2>
         <ul className={utilStyles.list}>
-          {allPostsData.map(({ id, date, title }) => (
-            <li className={utilStyles.listItem} key={id}>
-                <Link href={`/posts/${id}`}>
-                    <a>{title}</a>
+          {allPostsData.map(post => (
+            <li className={utilStyles.listItem} key={post.id}>
+                <Link href={`/posts/${post.id}`}>
+                    <a>{post.title}</a>
                 </Link>
                 <br />
                 <small className={utilStyles.lightText}>
-                    <Date dateString={date} />
+                    <Date dateString={post.date} />
                 </small>
             </li>
           ))}
