@@ -24,16 +24,14 @@ interface StaticProps {
     props: ChildProps;
 }
 
-// an array containing the data of all the images in the post
-//const [images, setImages] = useState< Array<string> >([]);
+/** An array containing the URLs of all the images in the post */
 let images: Array<string> = [];
-//const [imageCaptions, setImageCaptions] = useState< Array<string> >([]);
 let imageCaptions: Array<string> = [];
 
 export default function PostPage({ postData }: ChildProps) {
-    // used to close and open photoswipe
+    /** used to close and open photoswipe */
     const [isImageOpen, setIsImageOpen] = useState<boolean>(false);
-    // the index of the image that should be opened
+    /** The index of the image that should be opened */
     const [imageIndex, setImageIndex] = useState<number>(0);
 
     useEffect(() => {
@@ -56,7 +54,7 @@ export default function PostPage({ postData }: ChildProps) {
 
     const PostImage = ({ image }) => {
         if (images.indexOf(image.url) === -1) {
-            // add data to our arrays
+            // add the data to our arrays
             const caption = image.alt ? image.alt : '';
             images.push(image.url);
             imageCaptions.push(caption)
@@ -70,14 +68,15 @@ export default function PostPage({ postData }: ChildProps) {
                     className={utilStyles.pageImage}
                     onClick={e => {
                         if (images.length > 0) {
-                            // set the index of the image we want to open in our modal
+                            // set the index of the image we want to open 
                             const index = findIndex(image.url);
                             setImageIndex(index);
+                       
                             // open the modal
                             setIsImageOpen(true);   
 
-                            // block scroll while modal is open and set a margin on the page
-                            // with the same width as the scrollbar, so that the content 
+                            // block scroll while the modal is open and set a margin on the 
+                            // page with the same width as the scrollbar so that the content 
                             // doesn't jump around when the scrollbar appears/disappears 
 
                             let marginRightPx = 0;
