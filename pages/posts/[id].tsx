@@ -93,7 +93,7 @@ export default function PostPage({ postData }: ChildProps) {
 
             <article>
                 <h1 className={utilStyles.headingXl}>{postData.title}</h1>
-                
+
                 <div className={utilStyles.lightText}>
                     <Date dateString={postData.date} />
                 </div>
@@ -216,7 +216,11 @@ function PostImage({ image, pageState }: PostImageProps) {
 
 function PostLink({ link }) {
     return (
-        <a href={link.href} target="_blank">
+        <a 
+            href={link.href} 
+            target="_blank"
+            rel="noreferrer noopener"
+        >
             {link.children}
         </a>
     );
