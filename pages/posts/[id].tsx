@@ -65,20 +65,36 @@ export default function PostPage({ postData }: ChildProps) {
         return (
             <div className={utilStyles.pageImageContainer}>
                 <img 
-                    onClick={e => {
-
-                        if (images.length > 0) {
-                            const index = findIndex(image.url);
-                            setImageIndex(index);
-                            setIsImageOpen(true);   
-
-                            // block scroll while modal is open
-                            document.body.style.overflow = 'hidden';
-                        }  
-                    }}
                     src={image.url} 
                     alt={image.alt} 
                     className={utilStyles.pageImage}
+                    onClick={e => {
+                        if (images.length > 0) {
+                            // set the index of the image we want to open in our modal
+                            const index = findIndex(image.url);
+                            setImageIndex(index);
+                            // open the modal
+                            setIsImageOpen(true);   
+
+                            // block scroll while modal is open and set a margin on the page
+                            // with the same width as the scrollbar, so that the content 
+                            // doesn't jump around when the scrollbar appears/disappears 
+
+                            let marginRightPx = 0;
+                            if(window.getComputedStyle) {
+                                let bodyStyle = window.getComputedStyle(document.body);
+                                if(bodyStyle) {
+                                    marginRightPx = parseInt(bodyStyle.marginRight, 10);
+                                }
+                            }
+
+                            let scrollbarWidthPx = window.innerWidth - document.body.clientWidth;
+                            Object.assign(document.body.style, {
+                                overflowY: 'hidden',
+                                marginRight: `${marginRightPx + scrollbarWidthPx}px`,
+                            });
+                        }  
+                    }}
                 />
             </div>
         )
@@ -131,8 +147,11 @@ export default function PostPage({ postData }: ChildProps) {
                     onCloseRequest={() => {
                         setIsImageOpen(false);
 
-                        // re-enable the scroll
-                        document.body.style.overflow = 'unset';
+                        // re-enable the page scroll
+                        Object.assign(document.body.style, {
+                            overflowY: 'unset',
+                            marginRight: '0px',
+                        });
                     }}
                     onMovePrevRequest={() => {
                         setImageIndex((imageIndex + images.length - 1) % images.length)
