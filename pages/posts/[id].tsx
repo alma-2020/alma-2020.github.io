@@ -44,18 +44,56 @@ export default function PostPage({ postData }: Props) {
             // this function will run just before this component unmounts
             images = [];
             imageCaptions = [];
+
+            // enable the page scroll (just in case the user presses 
+            // the back button while the modal is open)
+            Object.assign(document.body.style, {
+                overflowY: 'unset',
+                marginRight: '0px',
+            });
         };
     }, []);
+
+    function handleImageClick(
+        e: React.MouseEvent<HTMLImageElement, MouseEvent>
+    ): void {
+        if (images.length > 0) {
+            // get the image we clicked
+            const image = e.target as HTMLImageElement;
+
+            // set the index of the image we want to open 
+            const index = findImageIndex(image.src);
+            setImageIndex(index);
+       
+            // open the modal
+            setIsImageOpen(true);   
+
+            // block scroll while the modal is open and set a margin on the 
+            // page with the same width as the scrollbar so that the content 
+            // doesn't jump around when the scrollbar appears/disappears 
+
+            let marginRightPx = 0;
+            if(window.getComputedStyle) {
+                let bodyStyle = window.getComputedStyle(document.body);
+                if(bodyStyle) {
+                    marginRightPx = parseInt(bodyStyle.marginRight, 10);
+                }
+            }
+
+            let scrollbarWidthPx = window.innerWidth - document.body.clientWidth;
+            Object.assign(document.body.style, {
+                overflowY: 'hidden',
+                marginRight: `${marginRightPx + scrollbarWidthPx}px`,
+            });
+        }
+    }
 
     const markdownRenderers = {
         image: (image) => {
             return (
                 <PostImage 
                     image={image} 
-                    pageState={{
-                        setImageIndex,
-                        setIsImageOpen,
-                    }}
+                    onClick={handleImageClick}
                 />
             );
         },
@@ -66,19 +104,11 @@ export default function PostPage({ postData }: Props) {
             const { node } = paragraph;
             if (node.children[0].type === 'image') {
                 const image = node.children[0];
-                return (
-                    <PostImage 
-                        image={image} 
-                        pageState={{
-                            setImageIndex,
-                            setIsImageOpen,
-                        }}
-                    />
-                );
+                return markdownRenderers.image(image);
             }
             if (node.children[0].type === 'a') {
                 const link = node.children[0];
-                return <PostLink link={link}/>;
+                return markdownRenderers.link(link);
             }
         
             return <p>{paragraph.children}</p>;
@@ -150,13 +180,12 @@ interface PostImageProps {
         url: string;
         alt: string;
     };
-    pageState: {
-        setIsImageOpen: Dispatch< SetStateAction<boolean> >;
-        setImageIndex: Dispatch< SetStateAction<number> >;
-    };
+    onClick: (
+        event: React.MouseEvent<HTMLImageElement, MouseEvent>
+    ) => void;
 }
 
-function PostImage({ image, pageState }: PostImageProps) {
+function PostImage({ image, onClick }: PostImageProps) {
     if (images.indexOf(image.url) === -1) {
         // add the data to our arrays
         const caption = image.alt ? image.alt : '';
@@ -164,53 +193,12 @@ function PostImage({ image, pageState }: PostImageProps) {
         imageCaptions.push(caption)
     }
 
-    function findImageIndex(imageUrl: string): number {
-        let index = images.indexOf(imageUrl);
-        if (index < 0) {
-            // start from the first image if we don't find this one
-            index = 0;
-        }
-
-        return index;
-    }
-
-    function handleClick(): void {
-        if (images.length > 0) {
-            const { setImageIndex, setIsImageOpen } = pageState;
-
-            // set the index of the image we want to open 
-            const index = findImageIndex(image.url);
-            setImageIndex(index);
-       
-            // open the modal
-            setIsImageOpen(true);   
-
-            // block scroll while the modal is open and set a margin on the 
-            // page with the same width as the scrollbar so that the content 
-            // doesn't jump around when the scrollbar appears/disappears 
-
-            let marginRightPx = 0;
-            if(window.getComputedStyle) {
-                let bodyStyle = window.getComputedStyle(document.body);
-                if(bodyStyle) {
-                    marginRightPx = parseInt(bodyStyle.marginRight, 10);
-                }
-            }
-
-            let scrollbarWidthPx = window.innerWidth - document.body.clientWidth;
-            Object.assign(document.body.style, {
-                overflowY: 'hidden',
-                marginRight: `${marginRightPx + scrollbarWidthPx}px`,
-            });
-        }
-    }
-
     return (
         <ImageContainer>
             <Image 
                 src={image.url} 
                 alt={image.alt} 
-                onClick={handleClick}
+                onClick={onClick}
             />
         </ImageContainer>
     )
@@ -226,6 +214,16 @@ function PostLink({ link }) {
             {link.children}
         </a>
     );
+}
+
+function findImageIndex(imageUrl: string): number {
+    let index = images.indexOf(imageUrl);
+    if (index < 0) {
+        // start from the first image if we don't find this one
+        index = 0;
+    }
+
+    return index;
 }
 
 export async function getStaticPaths() {

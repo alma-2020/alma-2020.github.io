@@ -5,8 +5,6 @@ export const Image = styled.img`
     max-height: 400px;
     min-height: 200px;
     min-width: 200px;
-    margin-left: 10px;
-    margin-right: 10px;
     text-align: center;
     border-radius: 8px;
         
@@ -14,9 +12,7 @@ export const Image = styled.img`
     cursor: pointer;
 
     @media only screen and (max-width: 550px) {
-        .pageImage {
-            max-width: 95%;
-        }
+        max-width: 95%;
     }
 `;
 
