@@ -13,7 +13,11 @@ import Layout from '../components/layout'
 import Date from '../components/date'
 import utilStyles from '../styles/utils.module.css'
 import { Post, getAllPostIds, getPostData } from '../../lib/posts'
-import { Image, ImageContainer } from '../../styles/postStyles'
+import { 
+    Image, 
+    ImageAndCaptionContainer, 
+    ImageContainer,
+} from '../../styles/postStyles'
 
 interface Props {
     postData: Post;
@@ -181,7 +185,7 @@ interface PostImageProps {
         alt: string;
     };
     onClick: (
-        event: React.MouseEvent<HTMLImageElement, MouseEvent>
+        event?: React.MouseEvent<HTMLImageElement, MouseEvent>
     ) => void;
 }
 
@@ -194,14 +198,21 @@ function PostImage({ image, onClick }: PostImageProps) {
     }
 
     return (
-        <ImageContainer>
-            <Image 
-                src={image.url} 
-                alt={image.alt} 
-                onClick={onClick}
-            />
-        </ImageContainer>
-    )
+        <ImageAndCaptionContainer>
+            <ImageContainer>
+                <Image 
+                    src={image.url} 
+                    alt={image.alt} 
+                    onClick={onClick}
+                />
+            </ImageContainer>
+            {(image.alt && image.alt.trim().length > 0) && (
+                <small>
+                    <p>{image.alt}</p>
+                </small>
+            )}
+        </ImageAndCaptionContainer>
+    );
 };
 
 function PostLink({ link }) {

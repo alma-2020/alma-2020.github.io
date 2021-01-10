@@ -8,7 +8,7 @@ export const Image = styled.img`
     text-align: center;
     border-radius: 8px;
         
-    /* make our image seem clicable to the user */
+    /* make our image seem clickable to the user */
     cursor: pointer;
 
     @media only screen and (max-width: 550px) {
@@ -21,3 +21,10 @@ export const ImageContainer = styled.div`
     justify-content: center;
 `;
 
+export const ImageAndCaptionContainer = styled.div`
+    text-align: center;
+
+    p {
+        color: #5b5b5b;
+    }
+`;
