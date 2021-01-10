@@ -77,9 +77,9 @@ export default function PostPage({ postData }: Props) {
             // doesn't jump around when the scrollbar appears/disappears 
 
             let marginRightPx = 0;
-            if(window.getComputedStyle) {
-                let bodyStyle = window.getComputedStyle(document.body);
-                if(bodyStyle) {
+            if (window.getComputedStyle) {
+                const bodyStyle = window.getComputedStyle(document.body);
+                if (bodyStyle) {
                     marginRightPx = parseInt(bodyStyle.marginRight, 10);
                 }
             }
@@ -106,11 +106,13 @@ export default function PostPage({ postData }: Props) {
         },
         paragraph: (paragraph) => {
             const { node } = paragraph;
-            if (node.children[0].type === 'image') {
+            const type = node.children[0].type;
+
+            if (type === 'image') {
                 const image = node.children[0];
                 return markdownRenderers.image(image);
             }
-            if (node.children[0].type === 'a') {
+            if (type === 'a') {
                 const link = node.children[0];
                 return markdownRenderers.link(link);
             }
@@ -190,9 +192,10 @@ interface PostImageProps {
 }
 
 function PostImage({ image, onClick }: PostImageProps) {
+    const caption = image.alt ? image.alt : '';
+    
     if (images.indexOf(image.url) === -1) {
         // add the data to our arrays
-        const caption = image.alt ? image.alt : '';
         images.push(image.url);
         imageCaptions.push(caption)
     }
@@ -206,7 +209,7 @@ function PostImage({ image, onClick }: PostImageProps) {
                     onClick={onClick}
                 />
             </ImageContainer>
-            {(image.alt && image.alt.trim().length > 0) && (
+            {(image.alt.trim().length > 0) && (
                 <small>
                     <p>{image.alt}</p>
                 </small>
