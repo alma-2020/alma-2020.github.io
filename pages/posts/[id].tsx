@@ -209,9 +209,9 @@ function PostImage({ image, onClick }: PostImageProps) {
                     onClick={onClick}
                 />
             </ImageContainer>
-            {(image.alt.trim().length > 0) && (
+            {(caption.trim().length > 0) && (
                 <small>
-                    <p>{image.alt}</p>
+                    <p>{caption}</p>
                 </small>
             )}
         </ImageAndCaptionContainer>
