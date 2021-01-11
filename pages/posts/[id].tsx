@@ -3,8 +3,6 @@ import ReactMarkdown from 'react-markdown'
 import Lightbox from 'react-image-lightbox'
 import 'react-image-lightbox/style.css'
 import React, { 
-    Dispatch, 
-    SetStateAction, 
     useEffect, 
     useState,
 } from 'react'
@@ -242,7 +240,7 @@ function findImageIndex(imageUrl: string): number {
 
 export async function getStaticPaths() {
     // Return a list of possible id values
-    const paths = getAllPostIds();
+    const paths = await getAllPostIds();
     
     return {
         paths,
