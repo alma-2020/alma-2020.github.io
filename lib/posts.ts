@@ -1,11 +1,7 @@
-import fs from 'fs'
+import { readFile, readdir } from 'fs/promises'
 import path from 'path'
-import { promisify } from 'util'
 import matter from 'gray-matter'
 import { parse, parseISO } from 'date-fns'
-
-const readFile = promisify(fs.readFile);
-const readdir = promisify(fs.readdir);
 
 export interface Post {
     id: string;
@@ -23,14 +19,13 @@ interface PostPagePath {
 
 const postsDirectory = path.join(process.cwd(), 'posts');
 
-export async function getSortedPostsData(): Promise<Post[]> {
-    const fileNames = await readdir(postsDirectory);
-    const allPostsData: Post[] = fileNames.map(fileName => {
+async function readPostFiles(fileNames: string[]): Promise<Post[]> {
+    return Promise.all(fileNames.map(async (fileName) => {
         // remove .md from the filename
         const id = fileName.replace(/\.md$/, '');
 
         const fullPath = path.join(postsDirectory, fileName);
-        const fileContents = fs.readFileSync(fullPath, 'utf8');
+        const fileContents = await readFile(fullPath, 'utf8');
 
         // convert from markdown
         const matterResult = matter(fileContents);
@@ -41,7 +36,12 @@ export async function getSortedPostsData(): Promise<Post[]> {
             date: matterResult.data.data,
             hour: matterResult.data.hora,
         };
-    });
+    }))
+}
+
+export async function getSortedPostsData(): Promise<Post[]> {
+    const fileNames = await readdir(postsDirectory);
+    const allPostsData: Post[] = await readPostFiles(fileNames);
     
     // sort posts by date
     return allPostsData.sort((a: Post, b: Post): number => {
