@@ -1,7 +1,14 @@
-import { readFile, readdir } from 'fs/promises'
+import { 
+    readFile as readFileAsync, 
+    readdir as readdirAsync 
+} from 'fs'
+import { promisify } from 'util'
 import path from 'path'
 import matter from 'gray-matter'
 import { parse, parseISO } from 'date-fns'
+
+const readFile = promisify(readFileAsync);
+const readdir = promisify(readdirAsync);
 
 export interface Post {
     id: string;
