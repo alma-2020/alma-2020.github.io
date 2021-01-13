@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Head from 'next/head';
 
 import styles from './layout.module.css';
-import utilStyles from '../styles/utils.module.css'
+import utilStyles from '../pages/styles/utils.module.css'
 
 const name = "A COOL BLOG";
 export const siteTitle = 'A COOL BLOG';

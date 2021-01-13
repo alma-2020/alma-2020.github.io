@@ -2,8 +2,8 @@ import Head from 'next/head'
 import Link from 'next/link'
 
 import { Post, getSortedPostsData } from '../lib/posts'
-import Layout, {siteTitle} from "./components/layout"
-import Date from './components/date'
+import Layout, {siteTitle} from "../components/layout"
+import Date from '../components/date'
 import utilStyles from './styles/utils.module.css'
 
 interface Props {

@@ -6,8 +6,8 @@ import React, {
     useEffect, 
     useState,
 } from 'react'
-import Layout from '../components/layout'
-import Date from '../components/date'
+import Layout from '../../components/layout'
+import Date from '../../components/date'
 import utilStyles from '../styles/utils.module.css'
 import { Post, getAllPostIds, getPostData } from '../../lib/posts'
 import { 
