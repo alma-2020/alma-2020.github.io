@@ -6,7 +6,6 @@ import React, {
     useEffect, 
     useState,
 } from 'react'
-
 import Layout from '../components/layout'
 import Date from '../components/date'
 import utilStyles from '../styles/utils.module.css'
@@ -31,24 +30,23 @@ interface StaticProps {
     props: Props;
 }
 
-/** An array containing the URLs of all the images in the post */
-let images: Array<string> = [];
-let imageCaptions: Array<string> = [];
-
 export default function PostPage({ postData }: Props) {
+    /** An array containing the URLs of all the images in the post */
+    const [images, setImages] = useState<string[]>([]);
+    const [imageCaptions, setImageCaptions] = useState<string[]>([]);
+
     /** used to close and open the image modal */
     const [isImageOpen, setIsImageOpen] = useState<boolean>(false);
+    
     /** The index of the image that should be opened */
     const [imageIndex, setImageIndex] = useState<number>(0);
 
     useEffect(() => {
         return () => {
             // this function will run just before this component unmounts
-            images = [];
-            imageCaptions = [];
 
             // enable the page scroll (just in case the user presses 
-            // the back button while the modal is open)
+            // the back button while the image modal is open)
             Object.assign(document.body.style, {
                 overflowY: 'unset',
                 marginRight: '0px',
@@ -64,7 +62,7 @@ export default function PostPage({ postData }: Props) {
             const image = e.target as HTMLImageElement;
 
             // set the index of the image we want to open 
-            const index = findImageIndex(image.src);
+            const index = findImageIndex(image.src, images);
             setImageIndex(index);
        
             // open the modal
@@ -90,12 +88,28 @@ export default function PostPage({ postData }: Props) {
         }
     }
 
+    function addImageData(url: string, caption: string): void {
+        if (images.indexOf(url) === -1) {
+            // add the data to our arrays
+            setImages([
+                ...images,
+                url,
+            ]);
+
+            setImageCaptions([
+                ...imageCaptions,
+                caption,
+            ]);
+        }
+    }
+
     const markdownRenderers = {
         image: (image) => {
             return (
                 <PostImage 
                     image={image} 
                     onClick={handleImageClick}
+                    addImageData={addImageData}
                 />
             );
         },
@@ -187,16 +201,19 @@ interface PostImageProps {
     onClick: (
         event?: React.MouseEvent<HTMLImageElement, MouseEvent>
     ) => void;
+    addImageData: (url: string, caption: string) => void;
 }
 
-function PostImage({ image, onClick }: PostImageProps) {
+function PostImage({ 
+    image, 
+    onClick,
+    addImageData,
+}: PostImageProps) {
     const caption = image.alt ? image.alt : '';
     
-    if (images.indexOf(image.url) === -1) {
-        // add the data to our arrays
-        images.push(image.url);
-        imageCaptions.push(caption)
-    }
+    useEffect(() => {
+        addImageData(image.url, caption);
+    }, []);
 
     return (
         <ImageAndCaptionContainer>
@@ -228,7 +245,7 @@ function PostLink({ link }) {
     );
 }
 
-function findImageIndex(imageUrl: string): number {
+function findImageIndex(imageUrl: string, images: string[]): number {
     let index = images.indexOf(imageUrl);
     if (index < 0) {
         // start from the first image if we don't find this one
