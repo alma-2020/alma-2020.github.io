@@ -5,12 +5,13 @@ import { Post, getSortedPostsData } from '../lib/posts'
 import Layout, {siteTitle} from "../components/layout"
 import Date from '../components/date'
 import utilStyles from './styles/utils.module.css'
+import { FC } from 'react'
 
 interface Props {
   allPostsData: Array<Post>;
 }
 
-export default function Home({ allPostsData }: Props) {
+const Home: FC<Props> = ({ allPostsData }) => {
   return (
     <Layout home>
       <Head>
@@ -43,9 +44,9 @@ export default function Home({ allPostsData }: Props) {
       </section>
     </Layout>
   );
-}
+};
 
-export async function getStaticProps() {
+export const getStaticProps = async () => {
   const allPostsData = await getSortedPostsData();
 
   return {
@@ -54,3 +55,5 @@ export async function getStaticProps() {
     }
   };
 }
+
+export default Home;

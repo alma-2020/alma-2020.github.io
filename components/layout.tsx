@@ -3,6 +3,7 @@ import Head from 'next/head';
 
 import styles from './layout.module.css';
 import utilStyles from '../pages/styles/utils.module.css'
+import { FC } from 'react';
 
 const name = "A COOL BLOG";
 export const siteTitle = 'A COOL BLOG';
@@ -12,7 +13,10 @@ interface Props {
     home?: boolean;
 }
 
-export default function Layout({ children, home }: Props) {
+const Layout: FC<Props> = ({ 
+    children, 
+    home,
+}) => {
     return (
         <div className={styles.container}>
             <Head>
@@ -72,3 +76,5 @@ export default function Layout({ children, home }: Props) {
         </div>
     );
 }
+
+export default Layout;

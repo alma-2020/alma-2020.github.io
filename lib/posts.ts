@@ -26,7 +26,7 @@ interface PostPagePath {
 
 const postsDirectory = path.join(process.cwd(), 'posts');
 
-async function readPostFiles(fileNames: string[]): Promise<Post[]> {
+const readPostFiles = async (fileNames: string[]): Promise<Post[]> => {
     return Promise.all(fileNames.map(async (fileName) => {
         // remove .md from the filename
         const id = fileName.replace(/\.md$/, '');
@@ -46,7 +46,7 @@ async function readPostFiles(fileNames: string[]): Promise<Post[]> {
     }))
 }
 
-export async function getSortedPostsData(): Promise<Post[]> {
+export const getSortedPostsData = async (): Promise<Post[]> => {
     const fileNames = await readdir(postsDirectory);
     const allPostsData: Post[] = await readPostFiles(fileNames);
     
@@ -64,7 +64,7 @@ export async function getSortedPostsData(): Promise<Post[]> {
     });
 }
 
-export async function getAllPostIds(): Promise<PostPagePath[]> {
+export const getAllPostIds = async (): Promise<PostPagePath[]> => {
     const fileNames = await readdir(postsDirectory);
     return fileNames.map(fileName => {
         return {
@@ -75,7 +75,7 @@ export async function getAllPostIds(): Promise<PostPagePath[]> {
     });
 }
 
-export async function getPostData(id: string): Promise<Post> {
+export const getPostData = async (id: string): Promise<Post> => {
     const fullPath = path.join(postsDirectory, `${id}.md`);
     const fileContents = await readFile(fullPath, 'utf8');
     const matterResult = matter(fileContents);
@@ -89,7 +89,7 @@ export async function getPostData(id: string): Promise<Post> {
     };
 }
 
-function parsePostDate(hour: string, date: string): Date {
+const parsePostDate = (hour: string, date: string): Date => {
     const postDate = parseISO(date);
 
     try {

@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown'
 import Lightbox from 'react-image-lightbox'
 import 'react-image-lightbox/style.css'
 import React, { 
+    FC,
     useEffect, 
     useState,
 } from 'react'
@@ -30,7 +31,7 @@ interface StaticProps {
     props: Props;
 }
 
-export default function PostPage({ postData }: Props) {
+const PostPage: FC<Props> = ({ postData }) => {
     /** An array containing the URLs of all the images in the post */
     const [images, setImages] = useState<string[]>([]);
     const [imageCaptions, setImageCaptions] = useState<string[]>([]);
@@ -142,7 +143,10 @@ export default function PostPage({ postData }: Props) {
             <article>
                 <h1 className={utilStyles.headingXl}>{postData.title}</h1>
 
-                <div className={utilStyles.lightText}>
+                <div 
+                    style={{ marginBottom: '18px' }}
+                    className={utilStyles.lightText}
+                >
                     <Date dateString={postData.date} />
                 </div>
                 
@@ -191,7 +195,7 @@ export default function PostPage({ postData }: Props) {
             )}
         </Layout>
     );
-}
+};
 
 interface PostImageProps {
     image: {
@@ -200,21 +204,21 @@ interface PostImageProps {
     };
     onClick: (
         event?: React.MouseEvent<HTMLImageElement, MouseEvent>
-    ) => void;
-    addImageData: (url: string, caption: string) => void;
+        ) => void;
+        addImageData: (url: string, caption: string) => void;
 }
-
-function PostImage({ 
+    
+export const PostImage: FC<PostImageProps> = ({ 
     image, 
     onClick,
     addImageData,
-}: PostImageProps) {
+}) => {
     const caption = image.alt ? image.alt : '';
-    
+        
     useEffect(() => {
         addImageData(image.url, caption);
     }, []);
-
+        
     return (
         <ImageAndCaptionContainer>
             <ImageContainer>
@@ -233,29 +237,32 @@ function PostImage({
     );
 };
 
-function PostLink({ link }) {
+export const PostLink = ({ link }) => {
     return (
         <a 
-            href={link.href} 
-            target="_blank"
-            rel="noreferrer noopener"
+        href={link.href} 
+        target="_blank"
+        rel="noreferrer noopener"
         >
             {link.children}
         </a>
     );
-}
+};
 
-function findImageIndex(imageUrl: string, images: string[]): number {
+export const findImageIndex = (
+    imageUrl: string, 
+    images: string[]
+): number => {
     let index = images.indexOf(imageUrl);
     if (index < 0) {
         // start from the first image if we don't find this one
         index = 0;
     }
-
+    
     return index;
-}
+};
 
-export async function getStaticPaths() {
+export const getStaticPaths = async () => {
     // Return a list of possible id values
     const paths = await getAllPostIds();
     
@@ -263,16 +270,18 @@ export async function getStaticPaths() {
         paths,
         fallback: false,
     };
-}
+};
 
-export async function getStaticProps(
-    { params }: Context
-): Promise<StaticProps> {
+export const getStaticProps = async (
+    context
+): Promise<StaticProps> => {
     // Fetch necessary data for the blog post using params.id
-    const postData = await getPostData(params.id);
+    const postData = await getPostData(context.params.id);
     return {
         props: {
             postData,
         },
     };
-}
+};
+
+export default PostPage;

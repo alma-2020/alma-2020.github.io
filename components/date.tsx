@@ -14,10 +14,14 @@ const Date: FC<Props> = ({ dateString }) => {
         return <div></div>
     }
 
-    return <time dateTime={dateString}>{format(date, 'dd/MM/yyyy')}</time>
+    return (
+        <time dateTime={dateString}>
+            {format(date, 'dd/MM/yyyy')}
+        </time>
+    );
 }
 
-function isDateValid(date: Date): boolean {
+const isDateValid = (date: Date): boolean => {
     return !isNaN(date.getTime());
 }
 
