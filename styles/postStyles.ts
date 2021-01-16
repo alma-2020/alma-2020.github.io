@@ -13,6 +13,7 @@ export const Image = styled.img`
 
     @media only screen and (max-width: 550px) {
         max-width: 95%;
+        max-height: 250px;
     }
 `;
 
